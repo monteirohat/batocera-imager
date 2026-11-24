@@ -12,6 +12,7 @@ const PAGE = `
     <span><strong>Handhelds</strong><em>2</em></span>
   </a>
   <a href="?group=pc" data-f="pc" data-title="PC and laptops" aria-current="true">
+    <span class="dl-fam-pic"><img src="/assets/img/logo-128.webp" alt=""></span>
     <span><strong>PC</strong><em>1</em></span>
   </a>
   <a href="?group=raspberry-pi" data-f="raspberry-pi" data-title="Raspberry Pi boards">
@@ -46,11 +47,21 @@ describe("parseDownloadPage", () => {
   const { families, devices } = parseDownloadPage(PAGE, "https://batocera.org/download");
 
   it("reads the families, without the empty ones", () => {
-    expect(families).toEqual([
-      { id: "handheld", name: "Handhelds", title: "Handheld consoles" },
-      { id: "pc", name: "PC", title: "PC and laptops" },
-      { id: "raspberry-pi", name: "Raspberry Pi", title: "Raspberry Pi boards" },
+    expect(families.map(f => [f.id, f.name, f.title])).toEqual([
+      ["handheld", "Handhelds", "Handheld consoles"],
+      ["pc", "PC", "PC and laptops"],
+      ["raspberry-pi", "Raspberry Pi", "Raspberry Pi boards"],
     ]);
+  });
+
+  it("gives each family a picture: its own, or a model's instead of the site's logo", () => {
+    expect(families.map(f => f.photoUrl)).toEqual([
+      "https://batocera.org/x.webp",
+      "https://batocera.org/assets/img/boards/medium/pc.webp",
+      "https://batocera.org/assets/img/boards/medium/pi4.webp",
+    ]);
+    const withLogo = parseDownloadPage(PAGE, "https://batocera.org/download", true);
+    expect(withLogo.families[1].photoUrl).toBe("https://batocera.org/assets/img/logo-128.webp");
   });
 
   it("reads each model once, and only those with an .img.gz", () => {

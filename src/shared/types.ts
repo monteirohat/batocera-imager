@@ -11,6 +11,8 @@ export interface Family {
   name: string;
   /** Long name in the model heading ("Raspberry Pi boards"). */
   title: string;
+  /** The tile's picture on batocera.org, or "" (shown when DEVICE_PHOTOS is on, see brand.ts). */
+  photoUrl: string;
 }
 
 /** A model, as one card of batocera.org/download. */
@@ -34,7 +36,7 @@ export interface Device {
   labeled: boolean;
   imageUrl: string;
   md5Url: string;
-  /** Photo on batocera.org; shown only when the brand assets are allowed (see brand.ts). */
+  /** Photo on batocera.org, or "" when the site has none (shown when DEVICE_PHOTOS is on, see brand.ts). */
   photoUrl: string;
   docUrl: string;
   /** Lower-case words to search in. */

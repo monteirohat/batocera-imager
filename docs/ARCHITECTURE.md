@@ -27,7 +27,11 @@ those attributes and the family tiles above them.
   list: the person sees "look for an update of the installer".
 - The last good list is saved in the app's data folder (`catalog.json`) and shown, with a notice,
   when batocera.org can't be reached.
-- Device photos are read but not shown until the Batocera team agrees: see `src/shared/brand.ts`.
+- The family tiles' and the models' photos are read too, and the interface loads them from
+  batocera.org (switch: `DEVICE_PHOTOS` in `src/shared/brand.ts`). Where the site shows its logo
+  instead of a photo, a family takes the photo of its first model that has one, and a model shows
+  its family's icon: the logo waits for the Batocera team's agreement (`OFFICIAL_LOGO`). A photo
+  that fails to load also falls back to the icon.
 
 ## Images
 

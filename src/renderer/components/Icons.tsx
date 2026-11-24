@@ -27,7 +27,7 @@ export const MEDIA_ICON: Record<MediaKind, LucideIcon | typeof SdCard> = {
   disk: HardDrive,
 };
 
-/** Stands for a family (and its models) while device photos are not shown. */
+/** Stands for a family (and its models) where there is no photo, or photos are off (see brand.ts). */
 export function familyIcon(id: string): LucideIcon {
   switch (id) {
     case "handheld":

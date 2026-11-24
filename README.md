@@ -22,9 +22,9 @@ an SD card with a separate tool. Batocera Imager does it in one place: choose th
 your device and the USB key or SD card, and it downloads the right image, checks it, writes it and
 reads it back.
 
-> **This project is not made by the Batocera team.** It uses batocera.org's look and its list of
-> devices and images, and the images come from Batocera's own servers. Batocera's logo and device
-> photos are not used until the team agrees.
+> **This project is not made by the Batocera team.** It uses batocera.org's look, its list of
+> devices and their photos (loaded from batocera.org), and the images come from Batocera's own
+> servers. Batocera's logo is not used until the team agrees.
 
 <p align="center">
   <img src="docs/assets/screenshots/device.png" alt="Choosing the device" width="820">

@@ -2,8 +2,8 @@
 // family, then a model. The model decides which image is written.
 
 import { CloudOff, Info, LoaderCircle, RotateCcw, Search, Star } from "lucide-react";
-import { useMemo, useState } from "react";
-import { OFFICIAL_ASSETS } from "../../shared/brand";
+import { useMemo, useState, type ReactNode } from "react";
+import { DEVICE_PHOTOS } from "../../shared/brand";
 import { DOWNLOAD_PAGE, type Catalog, type Device, type Family } from "../../shared/types";
 import { api } from "../api";
 import { familyIcon } from "../components/Icons";
@@ -24,13 +24,18 @@ interface Props {
   onRetry(): void;
 }
 
-export function DevicePicture({ device, family, className }: { device: Device; family: string; className: string }) {
+/** A photo from batocera.org on the light picture box, or the family's icon (no photo, photos off, or it failed to load). */
+export function Picture({ url, family, className }: { url: string; family: string; className: string }) {
+  const [failed, setFailed] = useState("");
   const Icon = familyIcon(family);
-  return (
-    <span className={className}>
-      {OFFICIAL_ASSETS && device.photoUrl ? <img src={device.photoUrl} alt="" loading="lazy" /> : <Icon className="icon" />}
-    </span>
-  );
+  const show = DEVICE_PHOTOS && url && failed !== url;
+  let content: ReactNode = <Icon className="icon" />;
+  if (show) content = <img src={url} alt="" loading="lazy" decoding="async" onError={() => setFailed(url)} />;
+  return <span className={className}>{content}</span>;
+}
+
+export function DevicePicture({ device, family, className }: { device: Device; family: string; className: string }) {
+  return <Picture url={device.photoUrl} family={family} className={className} />;
 }
 
 export function DeviceScreen({ state, family, device, onFamily, onDevice, onNext, onRetry }: Props) {
@@ -104,7 +109,6 @@ function Picker({ catalog, family, device, onFamily, onDevice, onNext }: Omit<Pr
       )}
       <div className="fam-grid" role="radiogroup" aria-label="Device family" onKeyDown={onGridKeys}>
         {catalog.families.map(f => {
-          const Icon = familyIcon(f.id);
           return (
             <button
               key={f.id}
@@ -116,7 +120,7 @@ function Picker({ catalog, family, device, onFamily, onDevice, onNext }: Omit<Pr
               data-nav
               onClick={() => pickFamily(f.id)}
             >
-              <span className="fam-pic"><Icon className="icon" /></span>
+              <Picture url={f.photoUrl} family={f.id} className="fam-pic" />
               <span className="fam-name"><strong>{f.name}</strong><em>{counts[f.id] ?? 0}</em></span>
             </button>
           );

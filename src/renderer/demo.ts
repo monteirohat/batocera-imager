@@ -14,14 +14,14 @@ function device(id: string, vendor: string, name: string, groups: string[], extr
 
 const catalog: Catalog = {
   families: [
-    { id: "handheld", name: "Handhelds", title: "Handheld consoles" },
-    { id: "pc", name: "PC", title: "PC and laptops" },
-    { id: "raspberry-pi", name: "Raspberry Pi", title: "Raspberry Pi boards" },
-    { id: "hardkernel", name: "Odroid", title: "Hardkernel boards" },
-    { id: "anbernic", name: "Anbernic", title: "Anbernic devices" },
-    { id: "ayn", name: "AYN", title: "AYN devices" },
-    { id: "xunlong", name: "Orange Pi", title: "Xunlong boards" },
-    { id: "others", name: "Others", title: "Other boards" },
+    { id: "handheld", name: "Handhelds", title: "Handheld consoles", photoUrl: "" },
+    { id: "pc", name: "PC", title: "PC and laptops", photoUrl: "" },
+    { id: "raspberry-pi", name: "Raspberry Pi", title: "Raspberry Pi boards", photoUrl: "" },
+    { id: "hardkernel", name: "Odroid", title: "Hardkernel boards", photoUrl: "" },
+    { id: "anbernic", name: "Anbernic", title: "Anbernic devices", photoUrl: "" },
+    { id: "ayn", name: "AYN", title: "AYN devices", photoUrl: "" },
+    { id: "xunlong", name: "Orange Pi", title: "Xunlong boards", photoUrl: "" },
+    { id: "others", name: "Others", title: "Other boards", photoUrl: "" },
   ],
   devices: [
     device("pc-recent", "PC", "Recent PC or laptop (Intel Haswell+, AMD Zen)", ["pc"], { note: "Faster on recent PCs (2013+)", noteKind: "plain" }),

@@ -8,6 +8,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Device photos: the family tiles and the model cards show the photos of batocera.org/download,
+  loaded from the site (`DEVICE_PHOTOS` in `src/shared/brand.ts`). Where the site shows its logo,
+  a model's photo or the family's icon stands in, until the Batocera team agrees to the logo.
 - The first version of the installer, with batocera.org's look (docs/STYLE.md):
   - **Media**: USB key, SD card or external drive.
   - **Device**: the families and models of batocera.org/download, read from the site, with search

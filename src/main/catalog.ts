@@ -7,6 +7,7 @@
 // when the site can't be reached.
 
 import { promises as fs } from "node:fs";
+import { OFFICIAL_LOGO } from "../shared/brand";
 import { DOWNLOAD_PAGE, type Catalog, type Device, type Family } from "../shared/types";
 import { getText } from "./http";
 
@@ -47,7 +48,16 @@ function absolute(url: string, base: string): string {
   }
 }
 
-export function parseDownloadPage(html: string, base = DOWNLOAD_PAGE): { families: Family[]; devices: Device[] } {
+/** batocera.org shows its logo where it has no photo (/assets/img/logo-128.webp). */
+function isLogo(url: string): boolean {
+  try {
+    return /\/logo[\w-]*\.\w+$/i.test(new URL(url).pathname);
+  } catch {
+    return false;
+  }
+}
+
+export function parseDownloadPage(html: string, base = DOWNLOAD_PAGE, allowLogo = OFFICIAL_LOGO): { families: Family[]; devices: Device[] } {
   const families: Family[] = [];
   const nav = /<nav[^>]*class="[^"]*\bdl-fams\b[^"]*"[^>]*>([\s\S]*?)<\/nav>/i.exec(html);
   if (nav) {
@@ -56,7 +66,14 @@ export function parseDownloadPage(html: string, base = DOWNLOAD_PAGE): { familie
       const id = attrs["data-f"];
       if (!id) continue;
       const name = /<strong[^>]*>([\s\S]*?)<\/strong>/i.exec(m[2]);
-      families.push({ id, name: name ? stripTags(name[1]) : id, title: attrs["data-title"] || id });
+      const img = /<img\b[^>]*>/i.exec(m[2]);
+      const photo = img ? absolute(parseAttributes(img[0]).src ?? "", base) : "";
+      families.push({
+        id,
+        name: name ? stripTags(name[1]) : id,
+        title: attrs["data-title"] || id,
+        photoUrl: photo && (allowLogo || !isLogo(photo)) ? photo : "",
+      });
     }
   }
 
@@ -73,7 +90,8 @@ export function parseDownloadPage(html: string, base = DOWNLOAD_PAGE): { familie
     const meta = /<span class="dl-meta">\s*(?:<span class="dl-(curver|oldver)">([^<]*)<\/span>|([^<]*))/i.exec(body);
     const note = meta ? decodeEntities((meta[2] ?? meta[3] ?? "").trim()) : "";
     const noteKind = meta?.[1] === "curver" ? "current" : meta?.[1] === "oldver" ? "old" : "plain";
-    const noPhoto = /class="dl-pic[^"]*\bis-nopic\b/i.test(body);
+    const photo = absolute(a["data-img"] ?? "", base);
+    const noPhoto = /class="dl-pic[^"]*\bis-nopic\b/i.test(body) || (isLogo(photo) && !allowLogo);
 
     devices.push({
       id,
@@ -88,7 +106,7 @@ export function parseDownloadPage(html: string, base = DOWNLOAD_PAGE): { familie
       labeled: "data-labeled" in a,
       imageUrl,
       md5Url: absolute(a["data-md5"] ?? "", base),
-      photoUrl: noPhoto ? "" : absolute(a["data-img"] ?? "", base),
+      photoUrl: noPhoto ? "" : photo,
       docUrl: absolute(a["data-doc"] ?? "", base),
       search: (a["data-search"] || `${a["data-vendor"] ?? ""} ${a["data-name"] ?? ""}`).toLowerCase(),
     });
@@ -99,6 +117,19 @@ export function parseDownloadPage(html: string, base = DOWNLOAD_PAGE): { familie
   }
   // A family without any model would show an empty grid.
   const used = families.filter(f => devices.some(d => d.groups.includes(f.id)));
+  // A family without its own picture (the site shows its logo there) takes the
+  // photo of one of its models: one that belongs to as few other tiles as
+  // possible (a handheld that is not an Anbernic for "Handhelds") and that no
+  // other tile shows yet.
+  const ids = new Set(used.map(f => f.id));
+  const tiles = (d: Device) => d.groups.filter(g => ids.has(g)).length;
+  const taken = new Set(used.map(f => f.photoUrl).filter(Boolean));
+  for (const f of used) {
+    if (f.photoUrl) continue;
+    const mine = devices.filter(d => d.groups.includes(f.id) && d.photoUrl).sort((a, b) => tiles(a) - tiles(b));
+    f.photoUrl = (mine.find(d => !taken.has(d.photoUrl)) ?? mine[0])?.photoUrl ?? "";
+    if (f.photoUrl) taken.add(f.photoUrl);
+  }
   return { families: used, devices };
 }
 
