@@ -15,6 +15,8 @@ All notable changes to this project are documented here. The format follows
   before anything is erased; the writer also never writes past the end of a drive.
 - Write progress counts the bytes that reached the drive, so the empty end of an image no longer
   stalls the bar at 99 %.
+- If the image's size can't be read when the device is chosen (no answer from the server), it is
+  asked again when the drive step opens, and the drive step says so while it is unknown.
 - Windows: the drive list reads the bus however PowerShell prints it (name or number), and a
   refused write points to Controlled folder access. Linux: a missing polkit agent or a refusal by
   polkit is said in plain words.

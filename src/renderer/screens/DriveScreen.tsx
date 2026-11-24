@@ -2,7 +2,7 @@
 // (the main process never returns the computer's own disks), and the list
 // follows what is plugged in. Drives of the kind chosen in step 1 come first.
 
-import { LoaderCircle, Plug } from "lucide-react";
+import { Info, LoaderCircle, Plug } from "lucide-react";
 import type { Drive, ImageInfo, MediaKind } from "../../shared/types";
 import { MEDIA_ICON } from "../components/Icons";
 import { onGridKeys } from "../components/gridKeys";
@@ -15,6 +15,8 @@ interface Props {
   error: string | null;
   selected: Drive | null;
   image: ImageInfo | null;
+  /** The image's size could not be read yet: drives can't be checked against it here. */
+  imageUnknown?: boolean;
   onSelect(drive: Drive): void;
   onNext(): void;
 }
@@ -25,7 +27,7 @@ export function tooSmall(drive: Drive, image: ImageInfo | null): string | null {
   return null;
 }
 
-function DriveRow({ drive, selected, image, onSelect, onNext }: { drive: Drive } & Omit<Props, "media" | "drives" | "error">) {
+function DriveRow({ drive, selected, image, onSelect, onNext }: { drive: Drive } & Omit<Props, "media" | "drives" | "error" | "imageUnknown">) {
   const Icon = MEDIA_ICON[drive.kind];
   const problem = tooSmall(drive, image);
   const where = drive.mountpoints.length ? drive.mountpoints.join(", ") : "Not mounted";
@@ -61,6 +63,13 @@ export function DriveScreen(props: Props) {
     <div className="wrap">
       <h2 className="step-head"><b>3</b> Which {name}?</h2>
       <p className="lead">Everything on the drive you choose will be erased. Unplug the drives you want to keep safe.</p>
+      {props.imageUnknown && (
+        <p className="hint" style={{ marginTop: "-.5rem", marginBottom: "1rem" }}>
+          <Info className="icon" />
+          The image's size could not be checked yet (no answer from the server). It is checked after the download, before
+          anything is erased.
+        </p>
+      )}
 
       {error && (
         <div className="notice err" role="alert" style={{ marginBottom: "1rem", maxWidth: 820 }}>

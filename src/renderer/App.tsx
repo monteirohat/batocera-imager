@@ -44,6 +44,8 @@ export function App() {
   const [familyId, setFamilyId] = useState<string | null>(() => saved("family"));
   const [deviceId, setDeviceId] = useState<string | null>(() => saved("device"));
   const [image, setImage] = useState<ImageInfo | null>(null);
+  /** The size check failed (network); it is tried again when the drive step opens. */
+  const [imageFailed, setImageFailed] = useState(false);
   const [drives, setDrives] = useState<Drive[] | null>(null);
   const [drivesError, setDrivesError] = useState<string | null>(null);
   const [driveId, setDriveId] = useState<string | null>(null);
@@ -79,14 +81,24 @@ export function App() {
   }, [ready, familyId, media]);
   const drive = drives?.find(d => d.id === driveId) ?? null;
 
-  // What the chosen image needs, to grey out drives that are too small.
+  // What the chosen image needs, to grey out drives that are too small before
+  // anything is downloaded. If the request fails, it is made again each time
+  // the drive step opens.
+  const imageFor = useRef<string | null>(null);
   useEffect(() => {
-    setImage(null);
     if (!device) return;
-    let live = true;
-    api.imageInfo(device).then(info => { if (live) setImage(info); }, () => undefined);
-    return () => { live = false; };
-  }, [device]);
+    const same = imageFor.current === device.id;
+    if (same && !imageFailed) return; // known, or being asked
+    imageFor.current = device.id;
+    if (!same) setImage(null);
+    setImageFailed(false);
+    const id = device.id;
+    api.imageInfo(device).then(
+      info => { if (imageFor.current === id) setImage(info); },
+      () => { if (imageFor.current === id) setImageFailed(true); },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [device, stage]);
 
   // The drive list follows what is plugged in while it is on screen.
   useEffect(() => {
@@ -184,6 +196,7 @@ export function App() {
           error={drivesError}
           selected={drive}
           image={image}
+          imageUnknown={imageFailed && !image}
           onSelect={d => setDriveId(d.id)}
           onNext={() => setConfirming(true)}
         />

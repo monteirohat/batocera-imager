@@ -42,7 +42,7 @@ reads it back.
    when macOS asks. At the end the drive is ejected.
 
 <p align="center">
-  <img src="docs/assets/screenshots/drive.png" alt="Choosing the drive" width="820">
+  <img src="docs/assets/screenshots/drive.png" alt="Choosing the drive: drives too small for the image are greyed out" width="820">
 </p>
 
 ### A real installation
