@@ -75,7 +75,8 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Batocera-Imager-${version}-win-${arch}-setup.${ext}"
     },
     "mac": {
       "target": [
@@ -100,6 +101,9 @@
     "asarUnpack": [
       "dist/main/**",
       "dist/shared/**"
-    ]
+    ],
+    "portable": {
+      "artifactName": "Batocera-Imager-${version}-win-${arch}-portable.${ext}"
+    }
   }
 }

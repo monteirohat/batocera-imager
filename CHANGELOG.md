@@ -6,35 +6,39 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-### Changed
+## [0.1.0] - 2026-11-24
 
-- Three steps instead of four: the installer opens on the device, and the drive step lists every
-  drive with its kind. The step that asked first for the kind of drive (USB key, SD card,
-  external drive) only sorted that list, and the kind is the system's guess.
-- macOS: the writing helper runs through `sudo` with the installer's own password dialog, as
-  balenaEtcher does, so macOS can ask once for removable volumes; no Full Disk Access needed.
-- The exact unpacked size of an image is read from its partition table before downloading
-  (Batocera 44 is 9.13 GB on ARM boards and 11.28 GB on PCs), so a drive too small is refused
-  before anything is erased; the writer also never writes past the end of a drive.
-- Write progress counts the bytes that reached the drive, so the empty end of an image no longer
-  stalls the bar at 99 %.
-- If the image's size can't be read when the device is chosen (no answer from the server), it is
-  asked again when the drive step opens, and the drive step says so while it is unknown.
-- Windows: the drive list reads the bus however PowerShell prints it (name or number), and a
-  refused write points to Controlled folder access. Linux: a missing polkit agent or a refusal by
-  polkit is said in plain words.
+The first version. Unofficial: Batocera Imager is not made by the Batocera team.
 
 ### Added
 
-- Device photos: the family tiles and the model cards show the photos of batocera.org/download,
-  loaded from the site (`DEVICE_PHOTOS` in `src/shared/brand.ts`). Where the site shows its logo,
-  a model's photo or the family's icon stands in, until the Batocera team agrees to the logo.
-- The first version of the installer, with batocera.org's look (docs/STYLE.md):
-  - **Device**: the families and models of batocera.org/download, read from the site, with search
-    and makers; the list is kept for when the site can't be reached.
-  - **Drive**: external and removable drives only, following what is plugged in; drives too small
-    for the image are greyed out.
-  - **Write**: the image is downloaded (resuming, checked against its MD5, kept for next time),
-    written, read back and compared, then the drive is ejected.
-- macOS, Linux (polkit) and Windows (administrator) ways to open a drive; see docs/ARCHITECTURE.md.
-- Tests of the catalog reader, the drive filters, the download and the writer.
+- Three steps, with batocera.org's look ([docs/STYLE.md](docs/STYLE.md)):
+  - **Device**: the families and models of [batocera.org/download](https://batocera.org/download),
+    read from the site with their photos, with search and makers. The list is kept for when the
+    site can't be reached.
+  - **Drive**: external and removable drives only, following what is plugged in. The exact size
+    of the image is read from its partition table before downloading, and drives too small for
+    it are greyed out.
+  - **Write**: the image is downloaded (resuming if the connection drops, checked against the MD5
+    published by Batocera, kept for next time), written with its partition table last, read back
+    and compared, then the drive is ejected.
+- One password per write: on macOS through a `sudo` helper with the installer's own dialog, as
+  balenaEtcher does (macOS also asks once to allow removable volumes); on Linux through polkit
+  (`pkexec`); on Windows the installer runs as administrator.
+- Safety: the computer's own disks are never listed, the drive is checked again right before it
+  is erased, and nothing is written past its end.
+- Installers for Windows (setup and portable), macOS (Apple silicon and Intel) and Linux
+  (AppImage and .deb).
+
+### Known issues
+
+- Tested end to end on macOS (Apple silicon) with a real USB key. On Linux and Windows the tests
+  and the build pass, but no drive has been written on them yet.
+- The installers are not signed: macOS and Windows warn on first launch (see the README). On
+  macOS, the removable-volumes permission is asked again after each update until the app is signed
+  with a Developer ID.
+- Batocera 44 needs a 16 GB drive (its image is 9.13 GB for ARM boards and 11.28 GB for PCs),
+  although batocera.org says 8 GB.
+
+[Unreleased]: https://github.com/monteirohat/batocera-imager/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/monteirohat/batocera-imager/releases/tag/v0.1.0

@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/monteirohat/batocera-imager/actions/workflows/ci.yml"><img src="https://github.com/monteirohat/batocera-imager/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/monteirohat/batocera-imager/releases/latest"><img src="https://img.shields.io/github/v/release/monteirohat/batocera-imager?sort=semver" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/monteirohat/batocera-imager" alt="License"></a>
 </p>
 
@@ -28,6 +29,31 @@ USB key or SD card, and it downloads the right image, checks it, writes it and r
 <p align="center">
   <img src="docs/assets/screenshots/device.png" alt="Choosing the device: families and models with their photos from batocera.org" width="820">
 </p>
+
+## Download
+
+Get the installer for your computer from the
+[latest release](https://github.com/monteirohat/batocera-imager/releases/latest):
+
+| System | File |
+|---|---|
+| Windows | `Batocera-Imager-<version>-win-x64-setup.exe` (installs it), or `-portable.exe` (runs without installing) |
+| macOS | `Batocera-Imager-<version>-mac-arm64.dmg` (Apple silicon, M1 and later) or `-mac-x64.dmg` (Intel) |
+| Linux | `Batocera-Imager-<version>-linux-x86_64.AppImage`, or the `.deb` package (Debian, Ubuntu…) |
+
+The installers are not signed yet, so the first launch shows a warning:
+
+- **Windows:** SmartScreen says "Windows protected your PC": choose **More info**, then
+  **Run anyway**. Windows then asks to let the app make changes: it runs as administrator to write
+  drives.
+- **macOS:** drag the app to Applications and open it. macOS says it "Not Opened" because Apple
+  could not check it: choose **Done**, open **System Settings > Privacy & Security**, and choose
+  **Open Anyway** next to "Batocera Imager". On the first write, type your password in the
+  installer's dialog, and choose **Allow** when macOS asks whether Batocera Imager may access
+  files on a removable volume.
+- **Linux:** make the AppImage executable (`chmod +x Batocera-Imager-*.AppImage`). Writing asks
+  for your password through polkit. If the AppImage does not open on Ubuntu 24.04 or later, install
+  the `.deb` instead.
 
 ## How to use
 
@@ -71,10 +97,10 @@ How it works on each system, and the safety rules: [docs/ARCHITECTURE.md](docs/A
 
 ## Status
 
-Early. The whole job works on macOS with a real USB key (above). On Linux and Windows the tests
-and the build pass, and the drive filters were checked on real Linux output, but no drive has been
-written on them yet: that is the next test before a first release. There is no release yet: build
-it from source.
+Version 0.1.0, the first one. The whole job works on macOS with a real USB key (above). On Linux
+and Windows the tests and the build pass, and the drive filters were checked on real Linux output,
+but no drive has been written on them yet: reports are welcome in the
+[issues](https://github.com/monteirohat/batocera-imager/issues).
 
 ## Building from source
 
@@ -91,6 +117,20 @@ npm run dist         # installers for the current system, in release/
 
 On Linux, writing needs polkit's `pkexec` (installed on most desktops). On Windows the installer
 runs as administrator.
+
+### Releasing
+
+Add the version's section to [CHANGELOG.md](CHANGELOG.md), then push a tag:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release workflow builds the Windows, macOS and Linux installers and publishes them in a
+GitHub release, with that version's notes from the changelog (it stops if the section is missing).
+To try the installers before tagging, run the workflow by hand (**Actions > Release > Run
+workflow**): it builds the same files and keeps them as artifacts of the run, without publishing.
 
 ## Contributing
 

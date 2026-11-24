@@ -1,8 +1,14 @@
 name: Release
 
+# A tag v* builds the installers on Windows, macOS and Linux and publishes them
+# in a GitHub release, with the notes of that version from CHANGELOG.md.
+# Run by hand (Actions > Release > Run workflow), it builds the same installers
+# and keeps them as workflow artifacts, to try before tagging: nothing is published.
+
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -26,8 +32,14 @@ jobs:
         run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Set the version from the tag
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
+
+      - name: Release notes from CHANGELOG.md
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: node scripts/release-notes.mjs "${GITHUB_REF_NAME#v}" > release-notes.md
 
       - name: Test
         run: npm test
@@ -39,11 +51,23 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
 
       - name: Publish to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          body_path: release-notes.md
           files: |
             release/*.exe
             release/*.dmg
             release/*.AppImage
             release/*.deb
-          generate_release_notes: true
+
+      - name: Keep the installers (trial run)
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: installers-${{ matrix.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.deb
