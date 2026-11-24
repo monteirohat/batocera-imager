@@ -49,7 +49,7 @@ export function WriteScreen({ device, drive, progress, error }: Props) {
 
   return (
     <div className="wrap write-view">
-      <h2 className="step-head"><b>4</b> {error ? "It did not work" : `Writing Batocera ${device.version}`}</h2>
+      <h2 className="step-head"><b>3</b> {error ? "It did not work" : `Writing Batocera ${device.version}`}</h2>
       <div className="write-device">
         <span className={`chip-ico sm c-${drive.kind}`}><Icon className="icon" /></span>
         <span>

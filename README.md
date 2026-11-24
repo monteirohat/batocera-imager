@@ -18,9 +18,8 @@
 [Batocera](https://batocera.org) turns a computer, a board or a handheld into a retro console. To
 install it, you pick the image made for your device on
 [batocera.org/download](https://batocera.org/download), download it, and write it to a USB key or
-an SD card with a separate tool. Batocera Imager does it in one place: choose the kind of drive,
-your device and the USB key or SD card, and it downloads the right image, checks it, writes it and
-reads it back.
+an SD card with a separate tool. Batocera Imager does it in one place: choose your device and the
+USB key or SD card, and it downloads the right image, checks it, writes it and reads it back.
 
 > **This project is not made by the Batocera team.** It uses batocera.org's look, its list of
 > devices and their photos (loaded from batocera.org), and the images come from Batocera's own
@@ -32,12 +31,11 @@ reads it back.
 
 ## How to use
 
-1. **Media.** Choose what Batocera goes on: a USB key, an SD card or an external drive.
-2. **Device.** Choose the family (handhelds, PC, Raspberry Pi…) and your model, as on the
+1. **Device.** Choose the family (handhelds, PC, Raspberry Pi…) and your model, as on the
    download page. The model decides which image is written.
-3. **Drive.** Plug in the drive and choose it. Only external and removable drives are listed;
-   drives too small for the image are greyed out. Batocera 44 needs a 16 GB drive.
-4. **Write.** Confirm. The installer asks for your password on macOS and Linux, then downloads,
+2. **Drive.** Plug in a USB key or an SD card and choose it. Only external and removable drives
+   are listed; drives too small for the image are greyed out. Batocera 44 needs a 16 GB drive.
+3. **Write.** Confirm. The installer asks for your password on macOS and Linux, then downloads,
    writes and verifies. On macOS, the first time, allow Batocera Imager to use removable volumes
    when macOS asks. At the end the drive is ejected.
 

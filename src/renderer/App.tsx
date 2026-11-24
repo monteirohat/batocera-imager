@@ -1,9 +1,9 @@
-// The installer's flow: media, device, drive, then writing. Choices are kept
-// for the next time the installer opens.
+// The installer's flow: device, drive, then writing. Choices are kept for the
+// next time the installer opens.
 
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Device, Drive, FlashProgress, FlashResult, ImageInfo, MediaKind } from "../shared/types";
+import type { Device, Drive, FlashProgress, FlashResult, ImageInfo } from "../shared/types";
 import { api, errorMessage } from "./api";
 import { TopBar } from "./components/TopBar";
 import { AboutDialog } from "./screens/AboutDialog";
@@ -11,14 +11,13 @@ import { ConfirmDialog } from "./screens/ConfirmDialog";
 import { DeviceScreen, type CatalogState } from "./screens/DeviceScreen";
 import { DoneScreen } from "./screens/DoneScreen";
 import { DriveScreen, tooSmall } from "./screens/DriveScreen";
-import { MediaScreen, mediaName } from "./screens/MediaScreen";
 import { WriteScreen } from "./screens/WriteScreen";
 
-type Stage = "media" | "device" | "drive" | "write" | "done";
-const STAGE_INDEX: Record<Stage, number> = { media: 0, device: 1, drive: 2, write: 3, done: 4 };
+type Stage = "device" | "drive" | "write" | "done";
+const STAGE_INDEX: Record<Stage, number> = { device: 0, drive: 1, write: 2, done: 3 };
 
-/** A family to start from when none was chosen before. */
-const FAMILY_FOR_MEDIA: Record<MediaKind, string> = { usb: "pc", sd: "raspberry-pi", disk: "pc" };
+/** The family shown the first time, as on batocera.org/download. */
+const FIRST_FAMILY = "pc";
 
 function saved<T extends string>(key: string): T | null {
   try {
@@ -38,8 +37,7 @@ function save(key: string, value: string | null): void {
 }
 
 export function App() {
-  const [stage, setStage] = useState<Stage>("media");
-  const [media, setMedia] = useState<MediaKind | null>(() => saved<MediaKind>("media"));
+  const [stage, setStage] = useState<Stage>("device");
   const [catalog, setCatalog] = useState<CatalogState>({ status: "loading" });
   const [familyId, setFamilyId] = useState<string | null>(() => saved("family"));
   const [deviceId, setDeviceId] = useState<string | null>(() => saved("device"));
@@ -76,9 +74,9 @@ export function App() {
   const family = useMemo(() => {
     if (!ready) return null;
     return ready.families.find(f => f.id === familyId)
-      ?? ready.families.find(f => f.id === (media ? FAMILY_FOR_MEDIA[media] : "pc"))
+      ?? ready.families.find(f => f.id === FIRST_FAMILY)
       ?? ready.families[0] ?? null;
-  }, [ready, familyId, media]);
+  }, [ready, familyId]);
   const drive = drives?.find(d => d.id === driveId) ?? null;
 
   // What the chosen image needs, to grey out drives that are too small before
@@ -126,7 +124,6 @@ export function App() {
 
   useEffect(() => { mainRef.current?.scrollTo({ top: 0 }); }, [stage]);
 
-  const chooseMedia = (kind: MediaKind) => { setMedia(kind); save("media", kind); };
   const chooseFamily = (id: string) => { setFamilyId(id); save("family", id); };
   const chooseDevice = (d: Device) => { setDeviceId(d.id); save("device", d.id); };
 
@@ -157,24 +154,19 @@ export function App() {
     setWriteError(null);
   };
 
-  const canNext = stage === "media" ? !!media : stage === "device" ? !!device : stage === "drive" ? !!drive : false;
+  const canNext = stage === "device" ? !!device : stage === "drive" ? !!drive : false;
   const next = () => {
     if (!canNext) return;
-    if (stage === "media") setStage("device");
-    else if (stage === "device") setStage("drive");
+    if (stage === "device") setStage("drive");
     else if (stage === "drive") setConfirming(true);
   };
   const back = () => {
-    if (stage === "device") setStage("media");
-    else if (stage === "drive") setStage("device");
+    if (stage === "drive") setStage("device");
     else if (stage === "write") setStage("drive");
   };
 
   let content;
   switch (stage) {
-    case "media":
-      content = <MediaScreen media={media} onSelect={chooseMedia} onNext={() => setStage("device")} />;
-      break;
     case "device":
       content = (
         <DeviceScreen
@@ -191,7 +183,6 @@ export function App() {
     case "drive":
       content = (
         <DriveScreen
-          media={media}
           drives={drives}
           error={drivesError}
           selected={drive}
@@ -211,8 +202,7 @@ export function App() {
   }
 
   const summary = [
-    media && <span key="m"><strong>{mediaName(media)}</strong></span>,
-    stage !== "media" && device && <span key="d"><strong>{device.name}</strong> · Batocera {device.version}</span>,
+    device && <span key="d"><strong>{device.name}</strong> · Batocera {device.version}</span>,
     (stage === "drive" || stage === "write" || stage === "done") && drive && <span key="v"><strong>{drive.name}</strong></span>,
   ].filter(Boolean);
 
@@ -224,7 +214,7 @@ export function App() {
         <div className="summary">
           {summary.length > 0
             ? summary.map((s, i) => <span key={i}>{i > 0 && <span className="sep">→</span>}{s}</span>)
-            : "Choose where Batocera will go."}
+            : "Choose the device Batocera will run on."}
         </div>
         <div className="actions">
           {stage === "write" && writing && (
@@ -238,10 +228,10 @@ export function App() {
               <button type="button" className="btn btn-primary" onClick={() => setConfirming(true)} disabled={!drive}>Try again</button>
             </>
           )}
-          {(stage === "device" || stage === "drive") && (
+          {stage === "drive" && (
             <button type="button" className="btn btn-ghost" onClick={back}><ArrowLeft className="icon" /> Back</button>
           )}
-          {(stage === "media" || stage === "device" || stage === "drive") && (
+          {(stage === "device" || stage === "drive") && (
             <button type="button" className="btn btn-primary" onClick={next} disabled={!canNext}>
               {stage === "drive" ? "Write" : "Next"} <ArrowRight className="icon" />
             </button>

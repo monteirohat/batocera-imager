@@ -8,6 +8,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Three steps instead of four: the installer opens on the device, and the drive step lists every
+  drive with its kind. The step that asked first for the kind of drive (USB key, SD card,
+  external drive) only sorted that list, and the kind is the system's guess.
 - macOS: the writing helper runs through `sudo` with the installer's own password dialog, as
   balenaEtcher does, so macOS can ask once for removable volumes; no Full Disk Access needed.
 - The exact unpacked size of an image is read from its partition table before downloading
@@ -27,7 +30,6 @@ All notable changes to this project are documented here. The format follows
   loaded from the site (`DEVICE_PHOTOS` in `src/shared/brand.ts`). Where the site shows its logo,
   a model's photo or the family's icon stands in, until the Batocera team agrees to the logo.
 - The first version of the installer, with batocera.org's look (docs/STYLE.md):
-  - **Media**: USB key, SD card or external drive.
   - **Device**: the families and models of batocera.org/download, read from the site, with search
     and makers; the list is kept for when the site can't be reached.
   - **Drive**: external and removable drives only, following what is plugged in; drives too small

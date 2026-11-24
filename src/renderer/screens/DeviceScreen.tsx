@@ -42,7 +42,7 @@ export function DeviceScreen({ state, family, device, onFamily, onDevice, onNext
   if (state.status === "loading") {
     return (
       <div className="wrap">
-        <h2 className="step-head"><b>2</b> What will you play on?</h2>
+        <h2 className="step-head"><b>1</b> What will you play on?</h2>
         <div className="loading"><LoaderCircle className="icon" /> Reading the list of devices from batocera.org…</div>
       </div>
     );
@@ -50,7 +50,7 @@ export function DeviceScreen({ state, family, device, onFamily, onDevice, onNext
   if (state.status === "error") {
     return (
       <div className="wrap">
-        <h2 className="step-head"><b>2</b> What will you play on?</h2>
+        <h2 className="step-head"><b>1</b> What will you play on?</h2>
         <div className="notice err" role="alert">
           <CloudOff className="icon" />
           <div>
@@ -97,7 +97,7 @@ function Picker({ catalog, family, device, onFamily, onDevice, onNext }: Omit<Pr
 
   return (
     <div className="wrap">
-      <h2 className="step-head"><b>2</b> What will you play on?</h2>
+      <h2 className="step-head"><b>1</b> What will you play on?</h2>
       {catalog.offline && (
         <div className="notice" style={{ marginBottom: "1rem" }}>
           <CloudOff className="icon" />

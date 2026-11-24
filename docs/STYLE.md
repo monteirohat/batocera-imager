@@ -274,19 +274,21 @@ border and ring.
 
 The installer's path, and the part of the site each screen borrows from:
 
-1. **Media** — "Where will you install it?": large tiles (USB key, SD card, ...) with an icon
-   chip, in the family tile's style.
-2. **Device** — the download page, almost as it is: "**1** What will you play on?" with the
+1. **Device** — the download page, almost as it is: "**1** What will you play on?" with the
    family tiles, the hint "Not sure? Any computer from the last 15 years runs the PC image.",
-   then "**2** Choose your model in …" with search, maker chips and the model cards.
-3. **Drive** — the drive rows of the chosen kind. Only removable drives; an empty list says what
-   to plug in, in a dashed `--border` box.
-4. **Confirm** — the dialog: device picture, "Batocera 44 · November 16, 2026", the drive, an
+   then "Choose your model in …" with search, maker chips and the model cards. The installer
+   opens on it.
+2. **Drive** — "**2** Which drive?": the drive rows, each with the icon of its kind (USB key,
+   SD card, external drive). Only removable drives; those too small for the image are greyed out
+   with the size it needs, after the others. An empty list says what to plug in, in a dashed
+   `--border` box. (There is no step to choose the kind of drive first: the list already shows
+   every drive, and the kind is only the system's guess.)
+3. **Confirm** — the dialog: device picture, "Batocera 44 · November 16, 2026", the drive, an
    erase warning notice ("Everything on SanDisk Ultra 32 GB will be erased."), primary "Write",
    ghost "Back".
-5. **Writing** — the progress, phase by phase (download, write, verify). The only action is a
-   ghost "Cancel".
-6. **Done** — the sky (see [Background](#background)), a big title, the three steps of the
+4. **Writing** — "**3** Writing Batocera 44": the progress, phase by phase (download, write,
+   verify). The only action is a ghost "Cancel".
+5. **Done** — the sky (see [Background](#background)), a big title, the three steps of the
    site's dialog: remove the key, boot your device, add your games.
 
 **Across all screens:**
@@ -305,7 +307,7 @@ The installer's path, and the part of the site each screen borrows from:
 - **Everywhere**: `--bg` with a few one-pixel stars (white, one orange, one teal, at 25-35 %
   opacity) and a teal glow at the top:
   `radial-gradient(120% 60% at 50% -10%, rgba(38,198,218,.12), transparent 60%)`.
-- **The sky**, on Media and Done only (the batocera.org headers, after Batocera 44's splash
+- **The sky**, on Done only (the batocera.org headers, after Batocera 44's splash
   screen): stars, a horizon line of teal light, and under it a grid of thin teal lines
   (`rgba(45,212,191,.1)`) that slowly runs toward you. It sits under the text and never behind a
   grid of cards.
@@ -339,7 +341,7 @@ Their colors follow [Icon colors](#icon-colors).
 The site speaks short, plain and to the reader: "Free, no account needed. Pick your device,
 flash the image on a USB key or an SD card, boot and play."
 
-- **Questions as step titles**: "What will you play on?", "Where will you install it?".
+- **Questions as step titles**: "What will you play on?", "Which drive?".
 - **"USB key" and "SD card"**, never "pendrive" or "storage device". "Image" for what is
   written, "Batocera 44" for the version.
 - **Sentence case**, "…" (the character) at the end of a placeholder, " · " between parts of a

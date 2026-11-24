@@ -1,16 +1,15 @@
-// Step 3: the drive to erase. Only external and removable drives are listed
+// Step 2: the drive to erase. Only external and removable drives are listed
 // (the main process never returns the computer's own disks), and the list
-// follows what is plugged in. Drives of the kind chosen in step 1 come first.
+// follows what is plugged in. Each shows its kind; those too small for the
+// image are greyed out, after the others.
 
 import { Info, LoaderCircle, Plug } from "lucide-react";
-import type { Drive, ImageInfo, MediaKind } from "../../shared/types";
+import type { Drive, ImageInfo } from "../../shared/types";
 import { MEDIA_ICON } from "../components/Icons";
 import { onGridKeys } from "../components/gridKeys";
 import { formatSize } from "../format";
-import { mediaNoun } from "./MediaScreen";
 
 interface Props {
-  media: MediaKind | null;
   drives: Drive[] | null;
   error: string | null;
   selected: Drive | null;
@@ -27,7 +26,7 @@ export function tooSmall(drive: Drive, image: ImageInfo | null): string | null {
   return null;
 }
 
-function DriveRow({ drive, selected, image, onSelect, onNext }: { drive: Drive } & Omit<Props, "media" | "drives" | "error" | "imageUnknown">) {
+function DriveRow({ drive, selected, image, onSelect, onNext }: { drive: Drive } & Omit<Props, "drives" | "error" | "imageUnknown">) {
   const Icon = MEDIA_ICON[drive.kind];
   const problem = tooSmall(drive, image);
   const where = drive.mountpoints.length ? drive.mountpoints.join(", ") : "Not mounted";
@@ -54,14 +53,13 @@ function DriveRow({ drive, selected, image, onSelect, onNext }: { drive: Drive }
 }
 
 export function DriveScreen(props: Props) {
-  const { media, drives, error } = props;
-  const name = mediaNoun(media);
-  const matching = (drives ?? []).filter(d => d.kind === media);
-  const others = (drives ?? []).filter(d => d.kind !== media);
+  const { drives, error, image } = props;
+  // Drives that can take the image first.
+  const sorted = [...(drives ?? [])].sort((a, b) => Number(!!tooSmall(a, image)) - Number(!!tooSmall(b, image)));
 
   return (
     <div className="wrap">
-      <h2 className="step-head"><b>3</b> Which {name}?</h2>
+      <h2 className="step-head"><b>2</b> Which drive?</h2>
       <p className="lead">Everything on the drive you choose will be erased. Unplug the drives you want to keep safe.</p>
       {props.imageUnknown && (
         <p className="hint" style={{ marginTop: "-.5rem", marginBottom: "1rem" }}>
@@ -80,30 +78,15 @@ export function DriveScreen(props: Props) {
 
       {drives === null && !error ? (
         <div className="loading"><LoaderCircle className="icon" /> Looking for drives…</div>
-      ) : drives && drives.length === 0 ? (
+      ) : sorted.length === 0 ? (
         <div className="empty">
           <Plug className="icon" />
-          <strong>
-            Plug in {name === "external drive" ? "an" : "a"} {name}
-            {props.image ? ` of ${formatSize(props.image.size)} or more` : ""}.
-          </strong>
+          <strong>Plug in a USB key or an SD card{image ? ` of ${formatSize(image.size)} or more` : ""}.</strong>
           It shows up here as soon as it is connected.
         </div>
       ) : (
-        <div onKeyDown={onGridKeys}>
-          {matching.length > 0 && (
-            <div className="drive-list" role="radiogroup" aria-label="Drives">
-              {matching.map(d => <DriveRow key={d.id} drive={d} {...props} />)}
-            </div>
-          )}
-          {others.length > 0 && (
-            <>
-              {matching.length > 0 && <div className="list-label">Other drives</div>}
-              <div className="drive-list" role="radiogroup" aria-label="Other drives">
-                {others.map(d => <DriveRow key={d.id} drive={d} {...props} />)}
-              </div>
-            </>
-          )}
+        <div className="drive-list" role="radiogroup" aria-label="Drives" onKeyDown={onGridKeys}>
+          {sorted.map(d => <DriveRow key={d.id} drive={d} {...props} />)}
         </div>
       )}
     </div>

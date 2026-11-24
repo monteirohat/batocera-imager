@@ -1,13 +1,13 @@
-// The bar at the top: the product name, where the person is in the four
+// The bar at the top: the product name, where the person is in the three
 // steps, and the About button. While the project is unofficial there is no
 // logo here (see src/shared/brand.ts).
 
 import { Check, Info } from "lucide-react";
 
-export const STEPS = ["Media", "Device", "Drive", "Write"] as const;
+export const STEPS = ["Device", "Drive", "Write"] as const;
 
 interface Props {
-  /** 0-3, or 4 when everything is done. */
+  /** 0-2, or 3 when everything is done. */
   step: number;
   mac: boolean;
   onAbout(): void;

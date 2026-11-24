@@ -4,7 +4,7 @@ import { BookOpen, RotateCcw } from "lucide-react";
 import type { Device, Drive, FlashResult } from "../../shared/types";
 import { api } from "../api";
 import { Sky } from "../components/Sky";
-import { mediaNoun } from "./MediaScreen";
+import { mediaNoun } from "../media";
 
 const GUIDE = "https://wiki.batocera.org/";
 
