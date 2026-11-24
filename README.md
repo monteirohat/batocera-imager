@@ -71,8 +71,8 @@ The installers are not signed yet, so the first launch shows a warning:
 
 ### A real installation
 
-Batocera 44 for a Raspberry Pi 4 written to a 64 GB USB key by the macOS app: 9.13 GB written at
-8 MB/s, read back and compared at 21 MB/s, then ejected.
+Batocera 44 for a Raspberry Pi 4 written to a 64 GB USB key by the macOS app (version 0.1.0):
+9.13 GB written at 8 MB/s, then read back and compared at 21 MB/s.
 
 <p align="center">
   <img src="docs/assets/screenshots/writing.png" alt="Writing" width="410">

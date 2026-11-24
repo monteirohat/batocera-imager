@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- macOS: the drive is ejected at the end even when macOS is still mounting its new partitions:
+  the eject is tried again for a few seconds instead of leaving the drive to eject by hand.
+
 ## [0.1.0] - 2026-11-24
 
 The first version. Unofficial: Batocera Imager is not made by the Batocera team.

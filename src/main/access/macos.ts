@@ -54,6 +54,22 @@ type Message =
   | { t: "done"; n: number }
   | { t: "error"; m: string };
 
+/**
+ * Ejects the drive. Right after the write macOS mounts the new partitions, and
+ * an eject in the middle of that fails: it is tried again for a few seconds,
+ * unmounting first.
+ */
+async function eject(disk: string): Promise<boolean> {
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    if (attempt > 1) {
+      await new Promise(r => setTimeout(r, 2000));
+      await run(DISKUTIL, ["unmountDisk", "force", disk], { timeoutMs: 30_000 }).catch(() => undefined);
+    }
+    if (await run(DISKUTIL, ["eject", disk], { timeoutMs: 60_000 }).then(() => true, () => false)) return true;
+  }
+  return false;
+}
+
 /** When macOS refused the drive: the person said no to "access files on a removable volume". */
 export const DRIVE_PRIVACY_HELP =
   `${DRIVE_PRIVACY_ERROR} In System Settings > Privacy & Security > Files and Folders, turn on Removable Volumes ` +
@@ -220,7 +236,7 @@ export async function openDrive(drive: Drive, signal: AbortSignal, options: MacO
       socket.end();
       await cleanup();
       if (!success) return false;
-      return run(DISKUTIL, ["eject", `/dev/${id}`], { timeoutMs: 60_000 }).then(() => true, () => false);
+      return eject(`/dev/${id}`);
     },
   };
 }
