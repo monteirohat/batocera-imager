@@ -27,7 +27,7 @@ reads it back.
 > servers. Batocera's logo is not used until the team agrees.
 
 <p align="center">
-  <img src="docs/assets/screenshots/device.png" alt="Choosing the device" width="820">
+  <img src="docs/assets/screenshots/device.png" alt="Choosing the device: families and models with their photos from batocera.org" width="820">
 </p>
 
 ## How to use

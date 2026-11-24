@@ -18,9 +18,9 @@ file takes the look (colors, type, shapes, the way things move) and rebuilds it 
 
 - **Copy no file from batocera.org** into the repository: no CSS, no `icons.svg`, no image.
 - **Device photos are shown, loaded from batocera.org** when a screen needs them (decided on
-  2026-11-24, to show the Batocera team how the installer looks with them). They are never
-  copied into the repository, and README screenshots keep the "no picture" look. The switch is
-  `DEVICE_PHOTOS` in `src/shared/brand.ts`.
+  2026-11-24, to show the Batocera team how the installer looks with them). The app never bundles
+  them; screenshots of the app in the repository may show them, as the README's device screen
+  does. The switch is `DEVICE_PHOTOS` in `src/shared/brand.ts`.
 - **Logo and butterfly only once the Batocera team agrees** (`OFFICIAL_LOGO`). Until then the
   header shows the product name without the logo; where the site shows its logo instead of a
   photo, a family takes a photo of one of its models and a model keeps the "no picture" look (see
@@ -357,7 +357,7 @@ flash the image on a USB key or an SD card, boot and play."
 - [ ] Changing figures in mono with tabular numbers.
 - [ ] Tested with the keyboard alone, and with reduced motion on.
 - [ ] Checked at 960 × 640 and at the default size, on Windows (Segoe UI) as well as macOS.
-- [ ] No logo or butterfly from batocera.org unless the Batocera team has agreed; device photos only through `DEVICE_PHOTOS`, loaded from the site, never copied.
+- [ ] No logo or butterfly from batocera.org unless the Batocera team has agreed; device photos only through `DEVICE_PHOTOS`, loaded from the site, never bundled in the app.
 
 ## Source
 
