@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-24
+
 ### Fixed
 
 - macOS: the drive is ejected at the end even when macOS is still mounting its new partitions:
@@ -45,5 +47,6 @@ The first version. Unofficial: Batocera Imager is not made by the Batocera team.
 - Batocera 44 needs a 16 GB drive (its image is 9.13 GB for ARM boards and 11.28 GB for PCs),
   although batocera.org says 8 GB.
 
-[Unreleased]: https://github.com/monteirohat/batocera-imager/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/monteirohat/batocera-imager/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/monteirohat/batocera-imager/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/monteirohat/batocera-imager/releases/tag/v0.1.0

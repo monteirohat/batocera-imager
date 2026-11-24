@@ -1,7 +1,7 @@
 {
   "name": "batocera-imager",
   "productName": "Batocera Imager",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unofficial installer for Batocera: pick your device and it writes the right image to a USB key or SD card.",
   "author": "monteirohat",
   "license": "MIT",

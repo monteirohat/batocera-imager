@@ -97,7 +97,7 @@ How it works on each system, and the safety rules: [docs/ARCHITECTURE.md](docs/A
 
 ## Status
 
-Version 0.1.0, the first one. The whole job works on macOS with a real USB key (above). On Linux
+Version 0.1.1. The whole job works on macOS with a real USB key (above). On Linux
 and Windows the tests and the build pass, and the drive filters were checked on real Linux output,
 but no drive has been written on them yet: reports are welcome in the
 [issues](https://github.com/monteirohat/batocera-imager/issues).
