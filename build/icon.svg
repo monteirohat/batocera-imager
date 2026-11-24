@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Batocera Imager's own icon: a card over a neon horizon, in batocera.org's colors. No Batocera artwork. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12292c"/>
+      <stop offset="1" stop-color="#051012"/>
+    </linearGradient>
+    <linearGradient id="action" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3683f"/>
+      <stop offset="1" stop-color="#e8146f"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c4f27a"/>
+      <stop offset=".5" stop-color="#4be08a"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <clipPath id="r"><rect x="64" y="64" width="896" height="896" rx="200"/></clipPath>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect x="64" y="64" width="896" height="896" fill="url(#bg)"/>
+    <ellipse cx="512" cy="700" rx="420" ry="120" fill="#2dd4bf" opacity=".12" filter="url(#glow)"/>
+    <g stroke="#2dd4bf" stroke-width="5" opacity=".35">
+      <line x1="64" y1="720" x2="960" y2="720"/>
+      <line x1="64" y1="770" x2="960" y2="770"/>
+      <line x1="64" y1="840" x2="960" y2="840"/>
+      <line x1="64" y1="935" x2="960" y2="935"/>
+      <line x1="512" y1="720" x2="512" y2="960"/>
+      <line x1="420" y1="720" x2="240" y2="960"/>
+      <line x1="604" y1="720" x2="784" y2="960"/>
+      <line x1="330" y1="720" x2="-40" y2="960"/>
+      <line x1="694" y1="720" x2="1064" y2="960"/>
+    </g>
+    <line x1="64" y1="720" x2="960" y2="720" stroke="url(#neon)" stroke-width="8"/>
+  </g>
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="none" stroke="#2a5458" stroke-width="6"/>
+  <!-- the card -->
+  <path d="M392 196h196l92 92v352a40 40 0 0 1-40 40H392a40 40 0 0 1-40-40V236a40 40 0 0 1 40-40z" fill="url(#action)"/>
+  <g stroke="#fff" stroke-width="22" stroke-linecap="round" opacity=".9">
+    <line x1="440" y1="262" x2="440" y2="330"/>
+    <line x1="504" y1="262" x2="504" y2="330"/>
+    <line x1="568" y1="282" x2="568" y2="330"/>
+  </g>
+  <!-- the arrow: written onto it -->
+  <path d="M516 400v170M446 506l70 70 70-70" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

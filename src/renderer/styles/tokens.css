@@ -1,0 +1,125 @@
+/* The installer's tokens: every color, radius, shadow and font a component
+   uses. Names and values are batocera.org's (site.css, Batocera 44), so they
+   can be compared when the site changes. See docs/STYLE.md. */
+
+:root {
+  /* backgrounds and surfaces */
+  --bg: #051012;
+  --bg-2: #08171a;
+  --surface: #0c1f22;
+  --surface-2: #12292c;
+  --dialog: #0a1d20;
+  --header: rgba(5, 16, 18, .55);
+  --header-solid: rgba(4, 12, 14, .9);
+  --pic: linear-gradient(160deg, #f4fbfb, #d8ecec);
+  --border: #1b3a3d;
+  --border-strong: #2a5458;
+
+  /* text */
+  --text: #eefafa;
+  --muted: #a6c3c4;
+  --faint: #86a6a8; /* the lightest grey that stays readable everywhere */
+  --link: #ffc46b;
+
+  /* accents and states */
+  --orange: #fbb03b;
+  --teal: #2dd4bf;
+  --pink: #e8146f;
+  --coral: #f2604a;
+  --cyan: #4fd8ff;
+  --green: #4ade80;
+  --red: #ff5a6e;
+
+  /* gradients */
+  --btn-grad: linear-gradient(135deg, #f3683f 0%, #e8146f 100%);
+  --btn-grad-hover: linear-gradient(135deg, #f67a50 0%, #ef2d7f 100%);
+  --grad: linear-gradient(135deg, #c4f27a 0%, #4be08a 50%, #2dd4bf 100%);
+  --on-grad: #1a0612;
+  --neon-line: linear-gradient(90deg, transparent, rgba(45, 212, 191, .7), rgba(251, 176, 59, .7), transparent);
+  --chrome: linear-gradient(180deg, #f2fffd 0%, #9ff0d6 30%, #4be08a 62%, #1fb7b0 100%);
+
+  /* tints of the accents */
+  --orange-12: rgba(251, 176, 59, .12);
+  --orange-35: rgba(251, 176, 59, .35);
+  --orange-55: rgba(251, 176, 59, .55);
+  --red-08: rgba(255, 90, 110, .08);
+  --red-50: rgba(255, 90, 110, .5);
+  --green-08: rgba(74, 222, 128, .08);
+  --green-50: rgba(74, 222, 128, .5);
+  --white-02: rgba(255, 255, 255, .02);
+  --white-035: rgba(255, 255, 255, .035);
+  --white-04: rgba(255, 255, 255, .04);
+  --white-06: rgba(255, 255, 255, .06);
+  --white-07: rgba(255, 255, 255, .07);
+  --white-09: rgba(255, 255, 255, .09);
+  --white-10: rgba(255, 255, 255, .1);
+  --backdrop: rgba(2, 8, 9, .78);
+
+  /* white, and the small tints of the accents */
+  --white: #fff;
+  --selection: rgba(45, 212, 191, .55);
+  --teal-14: rgba(45, 212, 191, .14);
+  --orange-10: rgba(251, 176, 59, .1);
+  --orange-16: rgba(251, 176, 59, .16);
+  --white-12: rgba(255, 255, 255, .12);
+  --dialog-x: rgba(6, 20, 23, .85);
+  --val-bg: rgba(0, 0, 0, .24);
+  /* icons drawn on a device picture's light background */
+  --on-pic: #0c1f22;
+
+  /* the night: a few stars and a teal glow at the top, and the horizon grid */
+  --stars:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .35), transparent 60%),
+    radial-gradient(1px 1px at 72% 9%, rgba(255, 255, 255, .3), transparent 60%),
+    radial-gradient(1.5px 1.5px at 38% 62%, rgba(251, 176, 59, .3), transparent 60%),
+    radial-gradient(1px 1px at 88% 44%, rgba(255, 255, 255, .25), transparent 60%),
+    radial-gradient(1px 1px at 22% 82%, rgba(45, 212, 191, .35), transparent 60%),
+    radial-gradient(120% 60% at 50% -10%, rgba(38, 198, 218, .12), transparent 60%);
+  --horizon: linear-gradient(90deg, transparent, rgba(45, 212, 191, .22) 20%, rgba(45, 212, 191, .4) 50%, rgba(45, 212, 191, .22) 80%, transparent);
+  --horizon-glow: 0 0 4px 1px rgba(45, 212, 191, .14);
+  --horizon-haze: linear-gradient(0deg, rgba(45, 212, 191, .06), transparent);
+  --floor-glow: radial-gradient(60% 140% at 50% 100%, rgba(45, 212, 191, .05), transparent);
+  --grid-line: rgba(45, 212, 191, .12);
+  --progress-glow: 0 0 12px rgba(45, 212, 191, .6);
+  --progress-done-glow: 0 0 12px rgba(74, 222, 128, .5);
+  --chrome-glow: drop-shadow(0 0 18px rgba(45, 212, 191, .45));
+
+  /* icon colors */
+  --ic-download: #f2604a;
+  --ic-list: #a855f7;
+  --ic-device: #2dd4bf;
+  --ic-guide: #fbb03b;
+  --ic-people: #60a5fa;
+  --ic-heart: #ff5a6e;
+  --ic-github: #c9d1d9;
+
+  /* shape */
+  --radius-sm: 8px;
+  --radius-chip: 9px;
+  --radius-tile: 12px;
+  --radius: 14px;
+  --radius-card: 16px;
+  --radius-dialog: 20px;
+  --radius-pill: 999px;
+
+  /* shadows and glows */
+  --shadow: 0 10px 30px -12px rgba(0, 0, 0, .6);
+  --shadow-dialog: 0 40px 90px -20px rgba(0, 0, 0, .95), 0 0 70px -35px rgba(251, 176, 59, .7);
+  --btn-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 8px 22px -12px rgba(232, 20, 111, .9);
+  --btn-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, .3), 0 12px 28px -12px rgba(232, 20, 111, 1);
+  --btn-text-shadow: 0 1px 1px rgba(90, 0, 40, .35);
+  --select-ring: 0 0 0 1px var(--orange), 0 14px 34px -20px var(--orange);
+  --hover-glow: 0 16px 36px -22px rgba(251, 176, 59, .8);
+  --neon-glow: 0 0 12px rgba(45, 212, 191, .7);
+  --focus-ring: 0 0 0 3px rgba(251, 176, 59, .25);
+
+  /* type */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* layout */
+  --wrap: 1180px;
+  --bar: 56px;
+
+  color-scheme: dark;
+}
