@@ -42,8 +42,20 @@ reads it back.
    when macOS asks. At the end the drive is ejected.
 
 <p align="center">
-  <img src="docs/assets/screenshots/drive.png" alt="Choosing the drive" width="410">
+  <img src="docs/assets/screenshots/drive.png" alt="Choosing the drive" width="820">
+</p>
+
+### A real installation
+
+Batocera 44 for a Raspberry Pi 4 written to a 64 GB USB key by the macOS app: 9.13 GB written at
+8 MB/s, read back and compared at 21 MB/s, then ejected.
+
+<p align="center">
   <img src="docs/assets/screenshots/writing.png" alt="Writing" width="410">
+  <img src="docs/assets/screenshots/verifying.png" alt="Verifying" width="410">
+</p>
+<p align="center">
+  <img src="docs/assets/screenshots/done.png" alt="Written and verified" width="820">
 </p>
 
 ## What it does
@@ -61,9 +73,10 @@ How it works on each system, and the safety rules: [docs/ARCHITECTURE.md](docs/A
 
 ## Status
 
-Early. The whole job has been tested on macOS with a test disk, and the drive filters on real
-Linux output. A USB key on each system (and the password prompts) is the next test before a
-first release. There is no release yet: build it from source.
+Early. The whole job works on macOS with a real USB key (above). On Linux and Windows the tests
+and the build pass, and the drive filters were checked on real Linux output, but no drive has been
+written on them yet: that is the next test before a first release. There is no release yet: build
+it from source.
 
 ## Building from source
 
