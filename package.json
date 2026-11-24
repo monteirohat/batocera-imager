@@ -96,6 +96,10 @@
         "from": "build/icon.png",
         "to": "icon.png"
       }
+    ],
+    "asarUnpack": [
+      "dist/main/**",
+      "dist/shared/**"
     ]
   }
 }

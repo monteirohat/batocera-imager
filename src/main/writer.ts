@@ -52,6 +52,12 @@ export function driveError(err: unknown): Error {
     return new Error("The drive stopped answering. Was it removed? If not, it may be damaged.");
   }
   if (code === "EPERM" || code === "EACCES") {
+    if (process.platform === "win32") {
+      return new Error(
+        "Windows refused to write to the drive. If Controlled folder access is on (Windows Security > " +
+        "Virus & threat protection > Ransomware protection), allow Batocera Imager there and try again.",
+      );
+    }
     return new Error("The system refused to let the installer write to the drive.");
   }
   return err instanceof Error ? err : new Error(String(err));
@@ -112,6 +118,8 @@ export async function writeImage(file: string, fd: number, options: WriteOptions
     // Wait for the previous block before starting this one.
     await pending;
     const at = position;
+    // Never past the end of the drive (flash() checks the size first; this is the last guard).
+    if (driveSize > 0 && at + writeLength > driveSize) throw Object.assign(new Error("past the end of the drive"), { code: "ENOSPC" });
     position += length;
     pending = writeAll(fd, buffer, writeLength, at);
     // A failed write is reported by the next await of `pending`; avoid an unhandled rejection meanwhile.

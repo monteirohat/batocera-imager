@@ -1,8 +1,9 @@
 // Step 4: download, check, write, verify, with one bar and the phases below
 // it. The only action while it runs is Cancel.
 
-import { Check, CircleX } from "lucide-react";
-import type { Device, Drive, FlashProgress, Phase } from "../../shared/types";
+import { Check, CircleX, ShieldCheck } from "lucide-react";
+import { DRIVE_PRIVACY_ERROR, type Device, type Drive, type FlashProgress, type Phase } from "../../shared/types";
+import { api } from "../api";
 import { MEDIA_ICON } from "../components/Icons";
 import { formatDuration, formatSize, formatSpeed } from "../format";
 
@@ -44,7 +45,7 @@ export function WriteScreen({ device, drive, progress, error }: Props) {
   const fraction = progress?.fraction ?? null;
   const pct = fraction === null ? null : Math.floor(fraction * 100);
   const Icon = MEDIA_ICON[drive.kind];
-  const remaining = progress && progress.speed > 0 && progress.total > 0 ? (progress.total - progress.done) / progress.speed : 0;
+  const remaining = progress && progress.speed >= 1000 && progress.total > 0 ? (progress.total - progress.done) / progress.speed : 0;
 
   return (
     <div className="wrap write-view">
@@ -57,7 +58,21 @@ export function WriteScreen({ device, drive, progress, error }: Props) {
         </span>
       </div>
 
-      {error ? (
+      {error?.startsWith(DRIVE_PRIVACY_ERROR) ? (
+        <div className="notice" role="alert">
+          <ShieldCheck className="icon" />
+          <div>
+            <strong>macOS needs to let Batocera Imager use the drive.</strong>
+            <p>
+              In <b>System Settings › Privacy &amp; Security › Files and Folders</b>, turn on <b>Removable Volumes</b> for
+              {" "}<b>Batocera Imager</b>, then choose <b>Try again</b>. Nothing was written to the drive.
+            </p>
+            <button type="button" className="btn" onClick={() => void api.openPrivacySettings()}>
+              <ShieldCheck className="icon" /> Open Files and Folders
+            </button>
+          </div>
+        </div>
+      ) : error ? (
         <div className="notice err" role="alert">
           <CircleX className="icon" />
           <div>

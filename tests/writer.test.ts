@@ -138,6 +138,7 @@ describe("image size", () => {
 
   it("reads it from a downloaded file", async () => {
     const { file, data } = await image("g", 3000);
-    expect((await probeFile(file)).minSize).toBe(data.length);
+    // No partition table in this one: the size is the smallest it can be.
+    expect(await probeFile(file)).toMatchObject({ size: data.length, exact: false });
   });
 });

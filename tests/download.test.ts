@@ -163,7 +163,8 @@ describe("probeImage", () => {
   it("asks for the size and the last four bytes", async () => {
     const info = await probeImage(url());
     expect(info.compressedSize).toBe(body.length);
-    expect(info.minSize % 2 ** 32).toBe(body.readUInt32LE(body.length - 4));
-    expect(info.minSize).toBeGreaterThanOrEqual(body.length);
+    expect(info.size % 2 ** 32).toBe(body.readUInt32LE(body.length - 4));
+    expect(info.size).toBeGreaterThanOrEqual(body.length);
+    expect(info.exact).toBe(false); // random bytes: no partition table
   });
 });

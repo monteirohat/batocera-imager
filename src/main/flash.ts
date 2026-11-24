@@ -7,7 +7,6 @@ import { openDrive } from "./access";
 import { obtainImage } from "./download";
 import { confirmSameDrive, type ListOptions } from "./drives";
 import { probeFile } from "./image";
-import { verifyDrive, writeImage } from "./writer";
 
 export interface FlashOptions extends ListOptions {
   cacheDir: string;
@@ -54,36 +53,40 @@ export async function flash(request: FlashRequest, options: FlashOptions): Promi
   progress.cached = image.cached;
 
   const info = await probeFile(image.path);
-  if (drive.size < info.minSize) {
+  if (drive.size < info.size) {
     const gb = (n: number) => (n / 1e9).toFixed(1);
-    throw new Error(`${drive.name} is too small for this image: it holds ${gb(drive.size)} GB and the image needs at least ${gb(info.minSize)} GB.`);
+    throw new Error(
+      `${drive.name} is too small for this image: it holds ${gb(drive.size)} GB and the image needs ${info.exact ? "" : "at least "}` +
+      `${gb(info.size)} GB. Nothing was written to the drive.`,
+    );
   }
 
   progress.report("access", 0, 0, true);
   await confirmSameDrive(drive, options);
   if (signal.aborted) throw signal.reason;
-  const access = await openDrive(drive, signal);
+  const access = await openDrive(drive, signal, { image: image.path, testDrive: !!options.testDrive && options.testDrive === drive.path });
 
   let written = 0;
   try {
     // The password prompt may have stayed open for a while: check the drive
-    // once more, now that it is open and before anything is erased.
+    // once more, now that access is given and before anything is erased.
     await confirmSameDrive(drive, options);
     if (signal.aborted) throw signal.reason;
 
-    progress.report("write", 0, info.compressedSize, true);
-    const result = await writeImage(image.path, access.fd, {
+    written = await access.writeAndVerify({
+      image: image.path,
       driveSize: drive.size,
       signal,
-      onProgress: compressed => progress.report("write", compressed, info.compressedSize),
+      // The "write" phase starts when the drive is actually being changed.
+      // Progress counts what reached the drive, against the unpacked size. (The
+      // .img.gz is a poor measure: the empty end of an image takes almost no
+      // room in it, so the last percent would take minutes.)
+      onStart: () => progress.report("write", 0, info.size, true),
+      onWrite: (_compressed, w) => progress.report("write", w, Math.max(info.size, w)),
+      onVerify: (done, total) => progress.report("verify", done, total, done === 0),
     });
-    written = result.bytes;
-
-    progress.report("verify", 0, written, true);
-    await access.beforeVerify();
-    await verifyDrive(access.fd, written, result.sha256, signal, done => progress.report("verify", done, written));
   } catch (err) {
-    // Tells main.ts the drive is gone from the list (macOS ejects it once access was given).
+    // Tells main.ts when the drive is gone from the list.
     if (await access.close(false)) throw Object.assign(err instanceof Error ? err : new Error(String(err)), { ejected: true });
     throw err;
   }

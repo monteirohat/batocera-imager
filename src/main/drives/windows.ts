@@ -27,8 +27,8 @@ export interface WinPartition {
 const BUS_NAMES: Record<number, string> = { 7: "USB", 12: "SD", 13: "MMC" };
 
 function bus(disk: WinDisk): string {
-  const b = disk.BusType;
-  return (typeof b === "number" ? BUS_NAMES[b] ?? String(b) : String(b ?? "")).toUpperCase();
+  const b = String(disk.BusType ?? "").trim();
+  return (/^\d+$/.test(b) ? BUS_NAMES[Number(b)] ?? b : b).toUpperCase();
 }
 
 export function kindOf(disk: WinDisk): MediaKind {

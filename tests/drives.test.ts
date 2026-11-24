@@ -147,6 +147,19 @@ describe("Windows drives", () => {
     ]);
   });
 
+  it("reads the bus however PowerShell prints it: a name, a number or a number in a string", () => {
+    const drives = drivesFromPowerShell({
+      disks: [
+        { Number: 1, FriendlyName: "Key", Size: 8e9, BusType: "USB" },
+        { Number: 2, FriendlyName: "Key", Size: 8e9, BusType: 7 },
+        { Number: 3, FriendlyName: "Card", Size: 8e9, BusType: "12" },
+        { Number: 4, FriendlyName: "Disk", Size: 8e9, BusType: "11" },
+      ],
+      parts: [],
+    });
+    expect(drives.map(d => [d.path.slice(-1), d.kind])).toEqual([["1", "usb"], ["2", "usb"], ["3", "sd"]]);
+  });
+
   it("reads PowerShell's single objects as lists", () => {
     const drives = drivesFromPowerShell({ disks: { Number: 1, FriendlyName: "Key", Size: 8e9, BusType: "USB" }, parts: { DiskNumber: 1, DriveLetter: "F" } });
     expect(drives.map(d => d.mountpoints)).toEqual([["F:"]]);

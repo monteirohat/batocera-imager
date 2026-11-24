@@ -17,6 +17,7 @@ const api: ImagerApi = {
   },
   clearCache: () => ipcRenderer.invoke("cache:clear"),
   openExternal: url => ipcRenderer.invoke("app:open-external", url),
+  openPrivacySettings: () => ipcRenderer.invoke("app:privacy-settings"),
   appInfo: () => ipcRenderer.invoke("app:info"),
 };
 

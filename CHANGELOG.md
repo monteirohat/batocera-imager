@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- macOS: the writing helper runs through `sudo` with the installer's own password dialog, as
+  balenaEtcher does, so macOS can ask once for removable volumes; no Full Disk Access needed.
+- The exact unpacked size of an image is read from its partition table before downloading
+  (Batocera 44 is 9.13 GB on ARM boards and 11.28 GB on PCs), so a drive too small is refused
+  before anything is erased; the writer also never writes past the end of a drive.
+- Write progress counts the bytes that reached the drive, so the empty end of an image no longer
+  stalls the bar at 99 %.
+- Windows: the drive list reads the bus however PowerShell prints it (name or number), and a
+  refused write points to Controlled folder access. Linux: a missing polkit agent or a refusal by
+  polkit is said in plain words.
+
 ### Added
 
 - Device photos: the family tiles and the model cards show the photos of batocera.org/download,

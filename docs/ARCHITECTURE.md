@@ -47,11 +47,17 @@ those attributes and the family tiles above them.
   Only the last image is kept; About can delete it.
 - **Free space** is checked before downloading.
 
-`src/main/image.ts` reads the last four bytes of the file (with a range request, before the
-download) to get gzip's unpacked size. gzip keeps it modulo 4 GiB, so the installer takes the
-first candidate larger than the download as a lower bound: a drive smaller than that is certainly
-too small and is greyed out. Batocera 44 for the Pi 4 is 2.3 GB to download and at least 4.8 GB
-unpacked.
+`src/main/image.ts` knows the unpacked size before the download, with two small range requests.
+gzip keeps the size only modulo 4 GiB in its last four bytes (a 9.13 GB image and a 4.83 GB one
+end the same way), so the installer also unpacks the first 64 KiB of the file: the image's own
+partition table (MBR, or GPT's header) says where its last partition ends, and the right size is
+the candidate that reaches that far. Drives smaller than it are greyed out, and flash() checks it
+again on the downloaded file before anything is erased. If the partition table can't be read, the
+smallest candidate is kept and shown as "or more".
+
+Sizes measured on 2026-11-24: Batocera 44 is 9.13 GB for the ARM boards (Pi 4, Pi 5, Odroid…)
+and 11.28 GB for PCs, so it needs a 16 GB drive; older images (v41, v42) are 7.00 GB.
+batocera.org still says "8 GB or more".
 
 ## Drives
 
@@ -89,12 +95,20 @@ it and waits until the drive is closed and given back.
 
 Only the step that needs privileges runs with them, and it asks once:
 
-- **macOS** (`access/macos.ts`): the system's password prompt (`osascript … with administrator
-  privileges`) runs `chown` on the drive's two device files (`/dev/diskN`, `/dev/rdiskN`) so the
-  person owns them until the drive is ejected. Then, without privileges: `diskutil unmountDisk`,
-  write and read through the raw device `/dev/rdiskN`, which has no cache, and `diskutil eject`.
-  Once access was given, the drive is ejected however the job ends (success, error or cancel),
-  so the device files never stay the person's.
+- **macOS** (`access/macos.ts`, `helper.ts`): macOS lets no one hand a raw drive to a normal
+  user, root included, so the writing runs as root in a helper: the app's own executable in Node
+  mode. It is started the way balenaEtcher starts its writer: through `sudo`, with the password
+  asked by a small dialog of our own (`SUDO_ASKPASS`). sudo keeps the helper in the person's
+  session and attributed to Batocera Imager, so macOS can ask once whether the app may use
+  removable volumes, and remembers the answer. (macOS's own administrator prompt,
+  `osascript … with administrator privileges`, runs the command in root's session instead,
+  where macOS can't ask and refuses the drive unless the app has Full Disk Access; that was the
+  first design, and it failed on a real USB key.) The helper connects to a Unix socket in a
+  private folder, waits for "go", checks as root that the drive is an external physical disk
+  and not the one the Mac runs from, unmounts it, writes, reads back through the raw device
+  `/dev/rdiskN` (no cache) and reports progress; it stops if the socket closes. The drive and
+  the image are fixed on its command line. Afterwards the app ejects the drive. If the person
+  refused removable volumes, the app shows where to turn them on.
 - **Linux** (`access/linux.ts`): `pkexec` (polkit) runs a short shell script as root
   (`ROOT_SCRIPT`). It checks the path, refuses a drive mounted where the system lives, unmounts
   the drive's partitions, gives the device file to the person and prints `ready`. The installer
@@ -108,6 +122,28 @@ Only the step that needs privileges runs with them, and it asks once:
   `diskpart` removes the drive's partitions so Windows lets go of its volumes, then
   `\\.\PhysicalDriveN` is opened. Windows mounts the new partitions after writing; the person
   ejects from the taskbar.
+
+### What each system may still refuse
+
+Reviewed on 2026-11-24, after macOS's privacy rules refused the first design:
+
+- **macOS.** Besides the password, macOS asks once whether Batocera Imager may use removable
+  volumes; a "no" is shown with the way to turn it on (System Settings > Privacy & Security >
+  Files and Folders). macOS ties that answer to the app's signature: with an ad-hoc signature every
+  build counts as a new app and asks again; a Developer ID signature keeps it across updates.
+- **Linux.** No privacy layer like macOS's for drives: polkit decides, and udev gives the device
+  back to root afterwards. It needs a polkit authentication agent, which every desktop runs; without
+  one (a bare window manager) pkexec can't ask and the installer says so. pkexec's prompt names
+  `/bin/sh`; a polkit policy file shipped in the .deb could give it the installer's own words.
+  Still to test: the AppImage on Ubuntu 24.04 and later, where AppArmor restricts the user
+  namespaces Electron's sandbox uses.
+- **Windows.** The whole app runs as administrator, with the UAC prompt at launch (as Raspberry Pi
+  Imager does; balenaEtcher elevates only its writer, which could be done here with the helper
+  and a named pipe). Writing the partition table last keeps Windows from mounting the new
+  partitions in the middle of the write, which would make it refuse the next writes. If
+  Controlled folder access (Ransomware protection) is on, Windows blocks writes to disk sectors
+  by apps it doesn't know: the error says where to allow the installer. Signing the installer
+  (Authenticode) avoids the SmartScreen warning.
 
 ### Writing and verifying
 
@@ -167,7 +203,7 @@ hdiutil detach /dev/diskN                        # when done, if the installer d
 | | macOS | Linux | Windows |
 |---|---|---|---|
 | Drive list | On a Mac (internal disk refused, RAM disk offered when named) | Filter run on a real `lsblk` (Batocera's own SD card refused) and on samples | Samples only |
-| Write and verify | End to end on a RAM disk, read back independently | Not yet | Not yet |
-| Password prompt | Not yet (a RAM disk needs none) | The root script's protocol, with stub commands (write, cancel, system drive refused) | — (runs as administrator) |
+| Write and verify | End to end on a RAM disk, read back independently. On a real 62.9 GB USB key, from the packaged app: Batocera 44 for the Pi 4 (9.13 GB) written at 8 MB/s, verified at 21 MB/s, ejected (2026-11-24). Before that, a 7.75 GB key showed the image was larger than estimated, which led to the exact size check | Not yet | Not yet |
+| Password prompt | sudo with our dialog, on a real USB key; the removable-volumes permission | The root script's protocol, with stub commands (write, cancel, system drive refused) | — (runs as administrator) |
 
 A USB key on each system is the next test before a release.

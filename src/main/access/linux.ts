@@ -16,9 +16,9 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { constants, promises as fs } from "node:fs";
 import type { Drive } from "../../shared/types";
-import { closeQuietly, openFd } from "../fd";
+import { openFd } from "../fd";
 import { run } from "../run";
-import { AccessRefused, type DriveAccess } from "./types";
+import { AccessRefused, descriptorAccess, type DriveAccess } from "./types";
 
 /** Runs as root: $1 device, $2:$3 the person's uid and gid. */
 export const ROOT_SCRIPT = `
@@ -80,6 +80,9 @@ function waitFor(child: ChildProcessWithoutNullStreams, word: string, stderr: ()
       cleanup();
       // pkexec: 126 when the prompt was dismissed, 127 when not authorized or no agent.
       if (code === 126) reject(new AccessRefused());
+      else if (/no authentication agent/i.test(stderr())) {
+        reject(new Error("No password prompt is available: this desktop has no polkit authentication agent running. Nothing was written to the drive."));
+      } else if (code === 127) reject(new Error("Your account is not allowed to write drives (polkit refused). Nothing was written to the drive."));
       else reject(new Error(`Could not get access to the drive: ${stderr().trim() || `exit code ${code}`}`));
     };
     const onAbort = () => {
@@ -128,23 +131,19 @@ export async function openDrive(drive: Drive, signal: AbortSignal): Promise<Driv
     throw err;
   }
 
-  return {
-    fd,
-    async beforeVerify() {
-      const flushed = waitFor(child, "flushed", () => stderr);
-      child.stdin.write("flush\n");
-      await Promise.race([
-        flushed,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("The drive's buffers could not be emptied in time.")), 120_000)),
-      ]);
-    },
-    async close(success) {
-      await closeQuietly(fd);
-      await release();
-      if (!success) return false;
-      // Unmounts what the desktop may have mounted meanwhile and powers the drive off.
-      await new Promise(r => setTimeout(r, 1500));
-      return run("udisksctl", ["power-off", "-b", drive.path], { timeoutMs: 30_000 }).then(() => true, () => false);
-    },
+  const beforeVerify = async () => {
+    const flushed = waitFor(child, "flushed", () => stderr);
+    child.stdin.write("flush\n");
+    await Promise.race([
+      flushed,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("The drive's buffers could not be emptied in time.")), 120_000)),
+    ]);
   };
+  return descriptorAccess(fd, beforeVerify, async success => {
+    await release();
+    if (!success) return false;
+    // Unmounts what the desktop may have mounted meanwhile and powers the drive off.
+    await new Promise(r => setTimeout(r, 1500));
+    return run("udisksctl", ["power-off", "-b", drive.path], { timeoutMs: 30_000 }).then(() => true, () => false);
+  });
 }

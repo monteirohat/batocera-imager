@@ -9,9 +9,9 @@ import { constants, promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { Drive } from "../../shared/types";
-import { closeQuietly, openFd } from "../fd";
+import { openFd } from "../fd";
 import { run } from "../run";
-import type { DriveAccess } from "./types";
+import { descriptorAccess, type DriveAccess } from "./types";
 
 async function clean(diskNumber: number): Promise<void> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "batocera-imager-"));
@@ -53,15 +53,7 @@ export async function openDrive(drive: Drive, signal: AbortSignal): Promise<Driv
     throw err;
   }
 
-  return {
-    fd,
-    async beforeVerify() {
-      // Physical drives are read without a cache.
-    },
-    async close(_success) {
-      await closeQuietly(fd);
-      // Windows mounts the new partitions by itself; the person ejects from the taskbar.
-      return false;
-    },
-  };
+  // Physical drives are read without a cache. Windows mounts the new
+  // partitions by itself; the person ejects from the taskbar.
+  return descriptorAccess(fd, async () => undefined, async () => false);
 }

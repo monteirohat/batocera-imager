@@ -131,6 +131,11 @@ function registerIpc(): void {
     await clearCache(cacheDir());
   });
 
+  ipcMain.handle("app:privacy-settings", () => {
+    if (process.platform === "darwin") {
+      return shell.openExternal("x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders");
+    }
+  });
   ipcMain.handle("app:open-external", (_event, url: string) => {
     if (isWebUrl(url)) return shell.openExternal(url);
   });

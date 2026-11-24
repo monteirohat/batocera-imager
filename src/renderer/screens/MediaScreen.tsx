@@ -62,7 +62,7 @@ export function MediaScreen({ media, onSelect, onNext }: Props) {
         </div>
         <p className="hint">
           <Info className="icon" />
-          It needs 8 GB or more, and everything on it will be erased.
+          Everything on it will be erased. How large it must be depends on the device: the drive step tells you.
         </p>
       </div>
       <Sky />

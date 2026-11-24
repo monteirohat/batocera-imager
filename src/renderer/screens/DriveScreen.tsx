@@ -21,7 +21,7 @@ interface Props {
 
 /** Why a drive can't take the image, or null. */
 export function tooSmall(drive: Drive, image: ImageInfo | null): string | null {
-  if (image && drive.size < image.minSize) return `Too small: this image needs ${formatSize(image.minSize)} or more.`;
+  if (image && drive.size < image.size) return `Too small: this image needs ${formatSize(image.size)}${image.exact ? "" : " or more"}.`;
   return null;
 }
 
@@ -74,7 +74,10 @@ export function DriveScreen(props: Props) {
       ) : drives && drives.length === 0 ? (
         <div className="empty">
           <Plug className="icon" />
-          <strong>Plug in {name === "external drive" ? "an" : "a"} {name} of 8 GB or more.</strong>
+          <strong>
+            Plug in {name === "external drive" ? "an" : "a"} {name}
+            {props.image ? ` of ${formatSize(props.image.size)} or more` : ""}.
+          </strong>
           It shows up here as soon as it is connected.
         </div>
       ) : (

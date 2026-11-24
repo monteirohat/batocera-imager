@@ -47,6 +47,7 @@ const catalog: Catalog = {
 
 const drives: Drive[] = [
   { id: "/dev/disk4", path: "/dev/disk4", name: "SanDisk Ultra", size: 31_914_983_424, kind: "usb", mountpoints: ["/Volumes/SANDISK"] },
+  { id: "/dev/disk7", path: "/dev/disk7", name: "USB DISK 2.0", size: 7_751_073_792, kind: "usb", mountpoints: [] },
   { id: "/dev/disk5", path: "/dev/disk5", name: "Generic SD Card Reader", size: 63_864_569_856, kind: "sd", mountpoints: ["/Volumes/NO NAME"] },
   { id: "/dev/disk6", path: "/dev/disk6", name: "Kingston DataTraveler", size: 4_009_754_624, kind: "usb", mountpoints: [] },
 ];
@@ -61,7 +62,7 @@ export const demoApi: ImagerApi = {
     return catalog;
   },
   async imageInfo() {
-    return { compressedSize: 2_308_840_368, minSize: 4_832_886_784 };
+    return { compressedSize: 2_308_840_368, size: 9_127_854_080, exact: true };
   },
   async drives() {
     return drives;
@@ -92,6 +93,7 @@ export const demoApi: ImagerApi = {
     return () => { listeners.delete(callback); };
   },
   async clearCache() {},
+  async openPrivacySettings() {},
   async openExternal(url) {
     window.open(url, "_blank", "noopener");
   },

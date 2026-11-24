@@ -36,9 +36,10 @@ reads it back.
 2. **Device.** Choose the family (handhelds, PC, Raspberry Pi…) and your model, as on the
    download page. The model decides which image is written.
 3. **Drive.** Plug in the drive and choose it. Only external and removable drives are listed;
-   drives too small for the image are greyed out.
+   drives too small for the image are greyed out. Batocera 44 needs a 16 GB drive.
 4. **Write.** Confirm. The installer asks for your password on macOS and Linux, then downloads,
-   writes and verifies. At the end the drive is ejected.
+   writes and verifies. On macOS, the first time, allow Batocera Imager to use removable volumes
+   when macOS asks. At the end the drive is ejected.
 
 <p align="center">
   <img src="docs/assets/screenshots/drive.png" alt="Choosing the drive" width="410">

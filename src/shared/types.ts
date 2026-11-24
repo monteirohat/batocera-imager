@@ -68,16 +68,17 @@ export interface Drive {
   serial?: string;
 }
 
-/** What the image needs, known before downloading it. */
+/** What the image needs, known before downloading it (see src/main/image.ts). */
 export interface ImageInfo {
   /** Size of the .img.gz file. */
   compressedSize: number;
+  /** Size of the unpacked image: what the drive must hold. */
+  size: number;
   /**
-   * The smallest size the unpacked image can have. gzip only stores the size
-   * modulo 4 GiB; this is the first candidate larger than the download, so a
-   * drive smaller than it is certainly too small.
+   * True when `size` comes from the image's partition table. False when it
+   * could not be read: `size` is then only the smallest the image can be.
    */
-  minSize: number;
+  exact: boolean;
 }
 
 export type Phase = "download" | "check" | "access" | "write" | "verify" | "finish";
@@ -126,8 +127,17 @@ export interface ImagerApi {
   onProgress(callback: (progress: FlashProgress) => void): () => void;
   clearCache(): Promise<void>;
   openExternal(url: string): Promise<void>;
+  /** macOS: opens System Settings at Privacy & Security > Files and Folders. */
+  openPrivacySettings(): Promise<void>;
   appInfo(): Promise<AppInfo>;
 }
 
 export const REPO_URL = "https://github.com/monteirohat/batocera-imager";
+
+/**
+ * The start of the error shown when macOS refused the drive because the person
+ * did not allow removable volumes: the interface recognizes it and offers to
+ * open the settings.
+ */
+export const DRIVE_PRIVACY_ERROR = "macOS did not let Batocera Imager use the drive.";
 export const DOWNLOAD_PAGE = "https://batocera.org/download";
